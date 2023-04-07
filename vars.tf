@@ -1,7 +1,6 @@
 variable "env" {}
 variable "engine" {}
 variable "engine_version" {}
-variable "instance_class" {}
 variable "db_name" {
   default = "dummy"
 }
