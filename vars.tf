@@ -1,7 +1,7 @@
 variable "env" {}
 variable "engine" {}
 variable "engine_version" {}
-variable "db_name" {
+variable "database_name" {
   default = "dummy"
 }
 variable "backup_retention_period" {}
