@@ -10,20 +10,12 @@ resource "aws_rds_cluster" "main" {
   db_subnet_group_name    = aws_db_subnet_group.main.name
   skip_final_snapshot     = true
   vpc_security_group_ids  = [aws_security_group.main.id]
+
   tags = merge(
     var.tags,
     { Name = "${var.env}-rds" }
   )
 
-}
-## creating node inside rds cluster
-resource "aws_rds_cluster_instance" "main" {
-  count              = var.no_of_instances
-  identifier         = "${var.env}-rds-${count.index}"
-  cluster_identifier = aws_rds_cluster.main.id
-  instance_class     = var.instance_class
-  engine             = var.engine
-  engine_version     = var.engine_version
 }
 resource "aws_security_group" "main" {
   name        = "rds-${var.env}"
@@ -51,7 +43,15 @@ resource "aws_security_group" "main" {
     { Name = "rds-${var.env}" }
   )
 }
-
+## creating node inside rds cluster
+resource "aws_rds_cluster_instance" "main" {
+  count              = var.no_of_instances
+  identifier         = "${var.env}-rds-${count.index}"
+  cluster_identifier = aws_rds_cluster.main.id
+  instance_class     = var.instance_class
+  engine             = var.engine
+  engine_version     = var.engine_version
+}
 resource "aws_db_subnet_group" "main" {
   name       = "${var.env}-rds"
   subnet_ids = var.subnet_ids
@@ -61,7 +61,7 @@ resource "aws_db_subnet_group" "main" {
   )
 }
 
-resource "aws_ssm_parameter" "elasticache_endpoint" {
+resource "aws_ssm_parameter" "rds_endpoint" {
   name  = "${var.env}.rds.endpoint"
   type  = "String"
   value = aws_rds_cluster.main.endpoint
